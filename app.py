@@ -8,7 +8,7 @@ app = Flask(__name__)
 CORS(app)
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
-GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.0-flash").strip()
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash").strip()
 TEMPLATE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "報價單-空白單.xlsx")
 
 OCR_PROMPT = """你是報價單辨識專家。請仔細辨識圖片中所有手寫或印刷文字，
