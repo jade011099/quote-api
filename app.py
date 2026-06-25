@@ -8,7 +8,7 @@ app = Flask(__name__)
 CORS(app)
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
-GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-1.5-flash")
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.1-pro-preview")
 TEMPLATE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "報價單-空白單.xlsx")
 
 OCR_PROMPT = """你是報價單辨識專家。請仔細辨識圖片中所有手寫或印刷文字，
@@ -41,8 +41,7 @@ def ocr():
     if not GEMINI_API_KEY:
         return jsonify(error="伺服器未設定 GEMINI_API_KEY"), 500
 
-    url = (f"https://generativelanguage.googleapis.com/v1beta/"
-           f"models/{GEMINI_MODEL}:generateContent?key={GEMINI_API_KEY}")
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
     payload = {
         "contents": [{"parts": [
             {"text": OCR_PROMPT},
@@ -55,7 +54,8 @@ def ocr():
     }
     try:
         r = requests.post(url, json=payload,
-                          headers={"Content-Type": "application/json"}, timeout=60)
+                          headers={"Content-Type": "application/json",
+                                   "x-goog-api-key": GEMINI_API_KEY}, timeout=60)
         r.raise_for_status()
         raw = r.json()["candidates"][0]["content"]["parts"][0]["text"]
         clean = raw.replace("```json", "").replace("```", "").strip()
